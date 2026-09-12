@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  <!-- Near-black square background -->
+  <rect width="32" height="32" rx="7" fill="#111113"/>
+  <!-- Vertical spine of the D, scaled and centered in the 32x32 square -->
+  <!-- Original viewBox: 22x26, scaled ~1.15x and centered -->
+  <!-- Vertical spine: from (8,4) to (8,28) -->
+  <line x1="8" y1="4" x2="8" y2="28" stroke="white" stroke-width="2.8" stroke-linecap="round"/>
+  <!-- Semicircular arc: chord from (8,4) to (8,28), r=12, rightmost at (20,16) -->
+  <path d="M 8 4 A 12 12 0 0 1 8 28" stroke="white" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+  <!-- The daymark tick at the apex (20,16), extending right -->
+  <line x1="20" y1="16" x2="25.5" y2="16" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+</svg>

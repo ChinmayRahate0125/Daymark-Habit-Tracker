@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <!--<link rel="icon" type="image/svg+xml" href="/favicon.svg" />-->
+  <link rel="icon" type="image/png" href="/public/logooooo.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daymark</title>
+  <meta name="description"
+    content="Daymark is a premium personal habit tracker built for daily consistency, streaks, and long-term progress." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+</head>
+<script>
+  (function () {
+    try {
+      var s = JSON.parse(localStorage.getItem('daymark-v2') || '{}');
+      if (s && s.state && s.state.settings) {
+        if (s.state.settings.theme === 'light') { document.documentElement.classList.add('light'); }
+        if (s.state.settings.accent) { document.documentElement.setAttribute('data-accent', s.state.settings.accent); }
+      }
+    } catch (e) { }
+  })();
+</script>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
+</html>

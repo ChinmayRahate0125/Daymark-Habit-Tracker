@@ -1,0 +1,351 @@
+@import "tailwindcss";
+
+@layer base {
+  /* ── Design Tokens — Night (default) ──────────────────────────────────── */
+  :root {
+    /* Backgrounds — slightly warmer and layered for depth */
+    --bg-canvas:   #0d0d11;
+    --bg-surface:  #111116;
+    --bg-card:     #17171c;
+    --bg-elevated: #1c1c23;
+    --bg-overlay:  #1e1e26;
+    --bg-tooltip:  #222230;
+
+    /* Borders — visible enough to define surfaces without shouting */
+    --border-xs:  rgba(255,255,255,0.05);
+    --border-sm:  rgba(255,255,255,0.07);
+    --border-md:  rgba(255,255,255,0.10);
+    --border-lg:  rgba(255,255,255,0.13);
+    --border-xl:  rgba(255,255,255,0.18);
+
+    /* Interactive surfaces */
+    --bg-hover:     rgba(255,255,255,0.06);
+    --bg-hover-sm:  rgba(255,255,255,0.04);
+    --bg-hover-row: rgba(255,255,255,0.025);
+    --bg-active:    rgba(255,255,255,0.09);
+
+    /* Shadows */
+    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+
+    /* ── Daymark Core Brand System (Fixed; independent of UI accents) ── */
+    --brand-primary:        #4f46e5;
+    --brand-primary-hover:  #4338ca;
+    --brand-light:          #818cf8;
+    --brand-dark:           #312e81;
+    --brand-surface-dark:   #1e1b4b;
+    --brand-surface-light:  #eef2ff;
+    --brand-border:         rgba(99, 102, 241, 0.25);
+    --brand-glow:           rgba(79, 70, 229, 0.35);
+    /* Wordmark text: warm white on dark backgrounds */
+    --brand-wordmark:       #e8e8f4;
+    /* Logo mark: stroke color in dark mode */
+    --brand-mark-fg:        rgba(255, 255, 255, 0.92);
+
+    --font-brand: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-ui:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    /* Default Accent: Violet / Purple (Night) */
+    --accent-primary:       #7c3aed;
+    --accent-hover:         #8b5cf6;
+    --accent-active:        #6d28d9;
+    --accent-text:          #a78bfa;
+    --accent-subtle:        rgba(124, 58, 237, 0.15);
+    --accent-subtle-border: rgba(124, 58, 237, 0.30);
+    --accent-glow:          rgba(124, 58, 237, 0.35);
+    --accent-heat-1:        #2d1854;
+    --accent-heat-2:        #4c2299;
+    --accent-heat-3:        #6d28d9;
+    --accent-heat-4:        #8b5cf6;
+  }
+
+  /* ── Design Tokens — Day (Light Mode) ─────────────────────────────────── */
+  html.light {
+    /* Soft off-white canvas with clean white cards (Apple style) */
+    --bg-canvas:   #f5f5f7;
+    --bg-surface:  #ededf2;
+    --bg-card:     #ffffff;
+    --bg-elevated: #fafafc;
+    --bg-overlay:  #ffffff;
+    --bg-tooltip:  #1e1e24;
+    /* Wordmark text: deep charcoal on light backgrounds */
+    --brand-wordmark: #14141f;
+    /* Logo mark: stroke color in light mode */
+    --brand-mark-fg:  #14141f;
+
+    /* Clean, crisp borders defining light surfaces */
+    --border-xs:  rgba(0,0,0,0.05);
+    --border-sm:  rgba(0,0,0,0.08);
+    --border-md:  rgba(0,0,0,0.11);
+    --border-lg:  rgba(0,0,0,0.16);
+    --border-xl:  rgba(0,0,0,0.22);
+
+    /* Interactive surfaces */
+    --bg-hover:     rgba(0,0,0,0.05);
+    --bg-hover-sm:  rgba(0,0,0,0.035);
+    --bg-hover-row: rgba(0,0,0,0.025);
+    --bg-active:    rgba(0,0,0,0.08);
+
+    /* Very restrained shadows */
+    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+
+    /* Default Accent: Violet / Purple (Day) */
+    --accent-primary:       #7c3aed;
+    --accent-hover:         #6d28d9;
+    --accent-active:        #5b21b6;
+    --accent-text:          #6d28d9;
+    --accent-subtle:        rgba(124, 58, 237, 0.08);
+    --accent-subtle-border: rgba(124, 58, 237, 0.22);
+    --accent-glow:          rgba(124, 58, 237, 0.20);
+    --accent-heat-1:        #ddd6fe;
+    --accent-heat-2:        #c4b5fd;
+    --accent-heat-3:        #8b5cf6;
+    --accent-heat-4:        #6d28d9;
+  }
+
+  /* ── Accent Variations: Blue ─────────────────────────────────────────── */
+  [data-accent="blue"] {
+    --accent-primary:       #2563eb;
+    --accent-hover:         #3b82f6;
+    --accent-active:        #1d4ed8;
+    --accent-text:          #60a5fa;
+    --accent-subtle:        rgba(37, 99, 235, 0.15);
+    --accent-subtle-border: rgba(37, 99, 235, 0.30);
+    --accent-glow:          rgba(37, 99, 235, 0.35);
+    --accent-heat-1:        #172554;
+    --accent-heat-2:        #1e40af;
+    --accent-heat-3:        #2563eb;
+    --accent-heat-4:        #60a5fa;
+  }
+  html.light[data-accent="blue"],
+  html.light [data-accent="blue"] {
+    --accent-primary:       #2563eb;
+    --accent-hover:         #1d4ed8;
+    --accent-active:        #1e40af;
+    --accent-text:          #1d4ed8;
+    --accent-subtle:        rgba(37, 99, 235, 0.08);
+    --accent-subtle-border: rgba(37, 99, 235, 0.22);
+    --accent-glow:          rgba(37, 99, 235, 0.20);
+    --accent-heat-1:        #dbeafe;
+    --accent-heat-2:        #93c5fd;
+    --accent-heat-3:        #3b82f6;
+    --accent-heat-4:        #1d4ed8;
+  }
+
+  /* ── Accent Variations: Emerald ──────────────────────────────────────── */
+  [data-accent="emerald"] {
+    --accent-primary:       #059669;
+    --accent-hover:         #10b981;
+    --accent-active:        #047857;
+    --accent-text:          #34d399;
+    --accent-subtle:        rgba(5, 150, 105, 0.15);
+    --accent-subtle-border: rgba(5, 150, 105, 0.30);
+    --accent-glow:          rgba(5, 150, 105, 0.35);
+    --accent-heat-1:        #064e3b;
+    --accent-heat-2:        #047857;
+    --accent-heat-3:        #059669;
+    --accent-heat-4:        #34d399;
+  }
+  html.light[data-accent="emerald"],
+  html.light [data-accent="emerald"] {
+    --accent-primary:       #059669;
+    --accent-hover:         #047857;
+    --accent-active:        #065f46;
+    --accent-text:          #047857;
+    --accent-subtle:        rgba(5, 150, 105, 0.08);
+    --accent-subtle-border: rgba(5, 150, 105, 0.22);
+    --accent-glow:          rgba(5, 150, 105, 0.20);
+    --accent-heat-1:        #d1fae5;
+    --accent-heat-2:        #6ee7b7;
+    --accent-heat-3:        #10b981;
+    --accent-heat-4:        #047857;
+  }
+
+  /* ── Accent Variations: Rose ─────────────────────────────────────────── */
+  [data-accent="rose"] {
+    --accent-primary:       #e11d48;
+    --accent-hover:         #f43f5e;
+    --accent-active:        #be123c;
+    --accent-text:          #fb7185;
+    --accent-subtle:        rgba(225, 29, 72, 0.15);
+    --accent-subtle-border: rgba(225, 29, 72, 0.30);
+    --accent-glow:          rgba(225, 29, 72, 0.35);
+    --accent-heat-1:        #4c0519;
+    --accent-heat-2:        #9f1239;
+    --accent-heat-3:        #e11d48;
+    --accent-heat-4:        #fb7185;
+  }
+  html.light[data-accent="rose"],
+  html.light [data-accent="rose"] {
+    --accent-primary:       #e11d48;
+    --accent-hover:         #be123c;
+    --accent-active:        #9f1239;
+    --accent-text:          #be123c;
+    --accent-subtle:        rgba(225, 29, 72, 0.08);
+    --accent-subtle-border: rgba(225, 29, 72, 0.22);
+    --accent-glow:          rgba(225, 29, 72, 0.20);
+    --accent-heat-1:        #ffe4e6;
+    --accent-heat-2:        #fda4af;
+    --accent-heat-3:        #f43f5e;
+    --accent-heat-4:        #be123c;
+  }
+
+  /* ── Accent Variations: Amber ────────────────────────────────────────── */
+  [data-accent="amber"] {
+    --accent-primary:       #d97706;
+    --accent-hover:         #f59e0b;
+    --accent-active:        #b45309;
+    --accent-text:          #fbbf24;
+    --accent-subtle:        rgba(217, 119, 6, 0.16);
+    --accent-subtle-border: rgba(217, 119, 6, 0.32);
+    --accent-glow:          rgba(217, 119, 6, 0.35);
+    --accent-heat-1:        #451a03;
+    --accent-heat-2:        #92400e;
+    --accent-heat-3:        #d97706;
+    --accent-heat-4:        #fbbf24;
+  }
+  html.light[data-accent="amber"],
+  html.light [data-accent="amber"] {
+    --accent-primary:       #d97706;
+    --accent-hover:         #b45309;
+    --accent-active:        #92400e;
+    --accent-text:          #b45309;
+    --accent-subtle:        rgba(217, 119, 6, 0.08);
+    --accent-subtle-border: rgba(217, 119, 6, 0.24);
+    --accent-glow:          rgba(217, 119, 6, 0.20);
+    --accent-heat-1:        #fef3c7;
+    --accent-heat-2:        #fcd34d;
+    --accent-heat-3:        #f59e0b;
+    --accent-heat-4:        #b45309;
+  }
+
+  /* ── Base Reset ───────────────────────────────────────────────────────── */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    transition: background-color 0.22s ease;
+  }
+
+  html, body, #root {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background-color: var(--bg-canvas);
+    color: #e8e8f0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.01em;
+    transition: background-color 0.22s ease, color 0.18s ease;
+  }
+
+  /* ── Light-mode typography hierarchy ─────────────────────────────────── */
+  html.light,
+  html.light body,
+  html.light #root {
+    color: #111827;
+  }
+
+  html.light h1.text-white,
+  html.light h2.text-white,
+  html.light p.text-white,
+  html.light strong.text-white {
+    color: #111827 !important;
+  }
+
+  html.light .text-zinc-100 { color: #111827 !important; }
+  html.light .text-zinc-200 { color: #1f2937 !important; }
+  html.light .text-zinc-300 { color: #374151 !important; }
+  html.light .text-zinc-400 { color: #4b5563 !important; }
+  html.light .text-zinc-500 { color: #6b7280 !important; }
+  html.light .text-zinc-600 { color: #71717a !important; }
+  html.light .text-zinc-700 { color: #cbd5e1 !important; }
+
+  /* Elements that must always retain white text (buttons, badges, checks) */
+  .keep-white,
+  .btn-primary,
+  .btn-primary *,
+  .circle-done,
+  .circle-done * {
+    color: #ffffff !important;
+  }
+
+  /* ── Brand Typography Utilities ───────────────────────────────────────── */
+  .font-brand {
+    font-family: var(--font-brand);
+  }
+  .font-ui {
+    font-family: var(--font-ui);
+  }
+
+  /* ── Accent Utility Classes ───────────────────────────────────────────── */
+  .btn-primary {
+    background-color: var(--accent-primary);
+    color: #ffffff !important;
+    transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  }
+  .btn-primary:hover {
+    background-color: var(--accent-hover);
+  }
+  .btn-primary:active {
+    background-color: var(--accent-active);
+    transform: scale(0.98);
+  }
+
+  .circle-done {
+    background-color: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 1px 3px var(--accent-glow);
+  }
+
+  .circle-today {
+    border: 2px solid var(--accent-primary) !important;
+    background-color: transparent;
+  }
+  .circle-today:hover {
+    border-color: var(--accent-hover) !important;
+    background-color: var(--accent-subtle) !important;
+  }
+
+  .circle-empty {
+    border: 1px solid var(--border-xl);
+    background-color: transparent;
+  }
+  html.light .circle-empty {
+    border-color: rgba(0, 0, 0, 0.22);
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+  .circle-empty:hover {
+    border-color: var(--accent-primary) !important;
+    background-color: var(--accent-subtle) !important;
+  }
+
+  /* ── Completion pop — subtle spring on toggle ─────────────────────────── */
+  @keyframes completePop {
+    0%   { transform: scale(1); }
+    35%  { transform: scale(1.22); }
+    65%  { transform: scale(0.92); }
+    100% { transform: scale(1); }
+  }
+  .complete-pop {
+    animation: completePop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  /* ── Selection ────────────────────────────────────────────────────────── */
+  ::selection {
+    background-color: var(--accent-primary);
+    color: #ffffff;
+  }
+
+  /* ── Scrollbar ────────────────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(128,128,128,0.25);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(128,128,128,0.42);
+  }
+}
