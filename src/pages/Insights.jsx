@@ -138,7 +138,7 @@ export default function Insights() {
           ].map(({ label, value }) => (
             <div
               key={label}
-              className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-xl px-5 py-4"
+              className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-xl px-5 py-4 card-hover"
             >
               <div className="text-[11px] text-zinc-400 font-medium uppercase tracking-wider mb-1.5">
                 {label}
@@ -151,7 +151,7 @@ export default function Insights() {
         </div>
 
         {/* Heatmap Card */}
-        <div className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 mb-6 shadow-sm">
+        <div className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 mb-6 shadow-sm card-hover">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
               Activity History — Past 365 Days
@@ -208,7 +208,7 @@ export default function Insights() {
         </div>
 
         {/* 30-Day Consistency Chart */}
-        <div className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 mb-6 shadow-sm">
+        <div className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 mb-6 shadow-sm card-hover">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-4">
             Daily Consistency — Last 30 Days
           </h2>
@@ -247,7 +247,7 @@ export default function Insights() {
         {/* Category Breakdown & Habit Leaderboard */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* By Category */}
-          <div className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 shadow-sm">
+          <div className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 shadow-sm card-hover">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-4">
               By Category
             </h2>
@@ -279,7 +279,7 @@ export default function Insights() {
           </div>
 
           {/* Habit Leaderboard */}
-          <div className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 shadow-sm">
+          <div className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 shadow-sm card-hover">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-4">
               Habit Leaderboard
             </h2>

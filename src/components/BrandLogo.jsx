@@ -22,54 +22,14 @@ export function BrandMark({ size = 'md', className = '' }) {
   const d = sizeMap[size] ?? (typeof size === 'number' ? size : 22);
 
   return (
-    <svg
+    <img
+      src="/logooooo.png"
+      alt="Daymark"
       width={d}
       height={d}
-      viewBox="0 0 22 26"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={`flex-shrink-0 ${className}`}
-      aria-label="Daymark"
-      role="img"
-    >
-      {/*
-        Vertical spine — left edge of the D.
-        From (5, 3) to (5, 23). Length = 20.
-      */}
-      <line
-        x1="5" y1="3"
-        x2="5" y2="23"
-        stroke="var(--brand-mark-fg)"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
-
-      {/*
-        Semicircular arc — right bow of the D.
-        Chord: (5,3) → (5,23), length = 20, radius = 10.
-        A perfect semicircle; rightmost point is at (15, 13).
-      */}
-      <path
-        d="M 5 3 A 10 10 0 0 1 5 23"
-        stroke="var(--brand-mark-fg)"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        fill="none"
-      />
-
-      {/*
-        The Daymark tick — a single horizontal mark at the apex of the arc.
-        Starts at the rightmost point (15, 13) and extends outward.
-        This is what makes the mark ownable: the literal "mark" in Daymark.
-      */}
-      <line
-        x1="15" y1="13"
-        x2="19.5" y2="13"
-        stroke="var(--brand-mark-fg)"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
+      className={`flex-shrink-0 rounded-md object-contain select-none ${className}`}
+      style={{ width: `${d}px`, height: `${d}px` }}
+    />
   );
 }
 

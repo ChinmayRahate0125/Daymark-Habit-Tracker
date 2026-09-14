@@ -30,19 +30,49 @@ export default function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const [editHabit, setEditHabit] = useState(null);
   const [menuOpen, setMenuOpen] = useState(null);
-  // Track which cell just popped for the completion animation
+  const [menuDirection, setMenuDirection] = useState('down');
+  // Track which cell just popped or unchecked for the completion animation
   const [popKey, setPopKey] = useState(null);
+  const [uncheckKey, setUncheckKey] = useState(null);
   const menuRef = useRef(null);
 
-  // Close context menu on outside click
+  // Close context menu on outside click or scroll
   useEffect(() => {
     if (!menuOpen) return;
     const handler = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(null);
     };
+    const handleScroll = () => setMenuOpen(null);
     document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    window.addEventListener('scroll', handleScroll, true);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      window.removeEventListener('scroll', handleScroll, true);
+    };
   }, [menuOpen]);
+
+  const handleMenuToggle = (e, habitId) => {
+    if (menuOpen === habitId) {
+      setMenuOpen(null);
+      return;
+    }
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const tableContainer = btn.closest('.overflow-x-auto') || btn.closest('table');
+    const containerBottom = tableContainer
+      ? tableContainer.getBoundingClientRect().bottom
+      : window.innerHeight;
+    const spaceBelowInContainer = containerBottom - rect.bottom;
+    const spaceBelowInViewport = window.innerHeight - rect.bottom;
+
+    // Menu is ~130px tall; flip upward if less than 140px available below
+    if (spaceBelowInContainer < 140 || spaceBelowInViewport < 140) {
+      setMenuDirection('up');
+    } else {
+      setMenuDirection('down');
+    }
+    setMenuOpen(habitId);
+  };
 
   const activeHabits = habits.filter((h) => h.status === 'active');
 
@@ -71,11 +101,16 @@ export default function Dashboard() {
     const cellDay = startOfDay(date);
     if (cellDay > TODAY) return;
     const key = `${habitId}-${format(date, 'yyyy-MM-dd')}`;
+    const wasDone = isDone(habitId, date);
     toggleCompletion(habitId, format(date, 'yyyy-MM-dd'));
-    // Trigger pop only when marking complete
-    if (!isDone(habitId, date)) {
+    if (!wasDone) {
       setPopKey(key);
-      setTimeout(() => setPopKey(null), 260);
+      setUncheckKey(null);
+      setTimeout(() => setPopKey(null), 250);
+    } else {
+      setUncheckKey(key);
+      setPopKey(null);
+      setTimeout(() => setUncheckKey(null), 250);
     }
   };
 
@@ -125,7 +160,7 @@ export default function Dashboard() {
           ].map(({ label, value, unit }) => (
             <div
               key={label}
-              className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-xl px-5 py-5"
+              className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-xl px-5 py-5 card-hover"
             >
               <div className="text-[10.5px] text-zinc-500 font-medium uppercase tracking-widest mb-2">
                 {label}
@@ -200,7 +235,7 @@ export default function Dashboard() {
 
           {/* ── Calendar Grid ── */}
           {activeHabits.length > 0 && (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto min-h-[220px]">
               <table
                 className="w-full border-collapse"
                 style={{ tableLayout: 'fixed' }}
@@ -268,38 +303,51 @@ export default function Dashboard() {
                 <tbody>
                   {activeHabits.map((habit) => {
                     const createdDay = startOfDay(parseISO(habit.createdAt));
+                    const isRowMenuOpen = menuOpen === habit.id;
                     return (
                       <tr
                         key={habit.id}
-                        className="group border-t border-[var(--border-xs)] hover:bg-[var(--bg-hover-row)] transition-colors duration-100"
+                        className="group habit-row border-t border-[var(--border-xs)] hover:bg-[var(--bg-hover-row)] transition-all duration-200 ease-out"
+                        style={isRowMenuOpen ? { position: 'relative', zIndex: 30 } : undefined}
                       >
                         {/* ── Habit name + menu ── */}
-                        <td className="px-5 py-3">
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <span className={`text-[15px] leading-none flex-shrink-0 ${categoryColor(habit.category)}`}>
+                        <td
+                          className="px-5 py-3"
+                          style={isRowMenuOpen ? { position: 'relative', zIndex: 30 } : undefined}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0 transition-transform duration-200 ease-out group-hover:translate-x-0.5">
+                            <span className={`text-[15px] leading-none flex-shrink-0 transition-transform duration-200 ease-out group-hover:scale-110 ${categoryColor(habit.category)}`}>
                               {categoryIcon(habit.category)}
                             </span>
                             <span
-                              className="text-[13px] text-zinc-200 font-medium truncate flex-1 leading-tight"
+                              className="text-[13px] text-zinc-200 font-medium truncate flex-1 leading-tight transition-colors duration-200 ease-out group-hover:text-zinc-100"
                               title={habit.name}
                             >
                               {habit.name}
                             </span>
                             {/* Context menu — appears on row hover */}
                             <div
-                              className="relative flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-100"
-                              ref={menuOpen === habit.id ? menuRef : null}
+                              className={`relative flex-shrink-0 transition-opacity duration-150 ${
+                                isRowMenuOpen ? 'opacity-100 z-50' : 'opacity-0 group-hover:opacity-100'
+                              }`}
+                              ref={isRowMenuOpen ? menuRef : null}
                             >
                               <button
                                 id={`menu-btn-${habit.id}`}
-                                onClick={() => setMenuOpen(menuOpen === habit.id ? null : habit.id)}
-                                className="w-6 h-6 flex items-center justify-center rounded-md text-zinc-500 hover:text-zinc-200 hover:bg-[var(--bg-active)] transition-colors"
+                                onClick={(e) => handleMenuToggle(e, habit.id)}
+                                className="w-6 h-6 flex items-center justify-center rounded-md text-zinc-500 hover:text-zinc-200 hover:bg-[var(--bg-active)] transition-all duration-150 active:scale-90"
                                 aria-label="Habit options"
                               >
                                 <MoreHorizontal size={13} />
                               </button>
-                              {menuOpen === habit.id && (
-                                <div className="absolute right-0 top-full mt-1.5 bg-[var(--bg-overlay)] border border-[var(--border-lg)] rounded-xl py-1 w-36 shadow-2xl shadow-black/40 z-50">
+                              {isRowMenuOpen && (
+                                <div
+                                  className={`absolute right-0 ${
+                                    menuDirection === 'up'
+                                      ? 'bottom-full mb-1.5 dropdown-enter-up'
+                                      : 'top-full mt-1.5 dropdown-enter'
+                                  } bg-[var(--bg-overlay)] border border-[var(--border-lg)] rounded-xl py-1 w-36 shadow-2xl shadow-black/40 z-50`}
+                                >
                                   <button
                                     onClick={() => openEdit(habit)}
                                     className="flex items-center gap-2.5 w-full px-3 py-1.5 text-[12px] text-zinc-300 hover:text-white hover:bg-[var(--bg-hover)] transition-colors"
@@ -335,7 +383,9 @@ export default function Dashboard() {
                               const done      = isDone(habit.id, cell);
                               const todayCell = cell && isToday(cell);
                               const clickable = cell && !isFuture && !isBefore;
-                              const cellKey   = cell ? `${habit.id}-${format(cell, 'yyyy-MM-dd')}` : null;
+                              const cellKey      = cell ? `${habit.id}-${format(cell, 'yyyy-MM-dd')}` : null;
+                              const isPopping    = popKey === cellKey;
+                              const isUnchecking = uncheckKey === cellKey;
 
                               return (
                                 <td key={di} className="py-3 text-center">
@@ -345,27 +395,36 @@ export default function Dashboard() {
                                       disabled={isFuture}
                                       title={cell ? format(cell, 'MMM d, yyyy') : ''}
                                       aria-label={done ? 'Mark incomplete' : 'Mark complete'}
-                                      className={`mx-auto w-[22px] h-[22px] rounded-full flex items-center justify-center transition-all duration-150 active:scale-90 ${
+                                      className={`mx-auto w-[22px] h-[22px] rounded-full flex items-center justify-center transition-all duration-200 ease-out active:scale-90 ${
                                         done
-                                          ? `circle-done ${popKey === cellKey ? 'complete-pop' : ''}`
+                                          ? `circle-done ${isPopping ? 'complete-pop' : ''}`
                                           : todayCell
-                                          ? 'circle-today'
+                                          ? `circle-today ${isUnchecking ? 'uncheck-pop' : ''}`
                                           : isFuture
                                           ? 'border border-[var(--border-xs)] opacity-25 cursor-default'
-                                          : 'circle-empty'
+                                          : `circle-empty ${isUnchecking ? 'uncheck-pop' : ''}`
                                       }`}
                                     >
-                                      {done && (
-                                        <svg width="9" height="9" viewBox="0 0 9 9" fill="none" aria-hidden>
-                                          <path
-                                            d="M1.5 4.5L3.5 6.5L7.5 2.5"
-                                            stroke="white"
-                                            strokeWidth="1.6"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                          />
-                                        </svg>
-                                      )}
+                                      <svg
+                                        width="9"
+                                        height="9"
+                                        viewBox="0 0 9 9"
+                                        fill="none"
+                                        aria-hidden="true"
+                                        className={`transition-all duration-200 ease-out ${
+                                          done
+                                            ? 'opacity-100 scale-100'
+                                            : 'opacity-0 scale-50 pointer-events-none'
+                                        }`}
+                                      >
+                                        <path
+                                          d="M1.5 4.5L3.5 6.5L7.5 2.5"
+                                          stroke="white"
+                                          strokeWidth="1.6"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                        />
+                                      </svg>
                                     </button>
                                   ) : (
                                     <span className="block w-[22px] h-[22px] mx-auto" />

@@ -161,10 +161,10 @@ export default function Badges() {
 function BadgeCard({ badge, locked }) {
   return (
     <div
-      className={`rounded-xl p-4 flex flex-col justify-between transition-all border ${
+      className={`rounded-xl p-4 flex flex-col justify-between transition-all duration-200 ease-out border ${
         locked
-          ? 'bg-[var(--bg-surface)] border-[var(--border-sm)] opacity-40 grayscale hover:opacity-60'
-          : 'bg-[var(--bg-card)] border-[var(--border-md)] hover:border-[var(--border-xl)]'
+          ? 'bg-[var(--bg-surface)] border-[var(--border-sm)] opacity-40 grayscale hover:opacity-65'
+          : 'bg-[var(--bg-card)] border-[var(--border-md)] card-hover'
       }`}
     >
       <div>

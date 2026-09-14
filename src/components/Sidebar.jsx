@@ -16,7 +16,7 @@ export default function Sidebar() {
       {/* ── Wordmark ───────────────────────────────────────────── */}
       <div className="px-5 pt-6 pb-6">
         <span
-          className="font-brand font-semibold tracking-[-0.04em] leading-none text-[19px]"
+          className="font-brand font-semibold tracking-[-0.04em] leading-none text-[19px] transition-opacity duration-200"
           style={{ color: 'var(--brand-wordmark)' }}
         >
           Daymark
@@ -31,16 +31,28 @@ export default function Sidebar() {
             to={to}
             end={to === '/'}
             className={({ isActive }) =>
-              `flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors ${
+              `group flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium
+               transition-all duration-200 ease-out ${
                 isActive
                   ? 'bg-[var(--accent-subtle)]'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-[var(--bg-hover-sm)]'
+                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-[var(--bg-hover-sm)] hover:translate-x-0.5'
               }`
             }
             style={({ isActive }) => (isActive ? { color: 'var(--accent-text)' } : {})}
           >
-            <Icon size={15} className="opacity-85 flex-shrink-0" />
-            <span>{label}</span>
+            {({ isActive }) => (
+              <>
+                <Icon
+                  size={15}
+                  className={`flex-shrink-0 transition-all duration-200 ease-out ${
+                    isActive
+                      ? 'opacity-100 scale-105'
+                      : 'opacity-60 group-hover:opacity-100 group-hover:scale-105'
+                  }`}
+                />
+                <span className="transition-colors duration-200">{label}</span>
+              </>
+            )}
           </NavLink>
         ))}
       </nav>

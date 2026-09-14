@@ -64,7 +64,7 @@ export default function Settings() {
         </div>
 
         {/* ── Appearance ── */}
-        <section className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 mb-5 shadow-sm">
+        <section className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 mb-5 shadow-sm card-hover">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1">
             Appearance
           </h2>
@@ -75,32 +75,32 @@ export default function Settings() {
             {/* Night */}
             <button
               onClick={() => updateSettings({ theme: 'dark' })}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium border transition-all ${
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium border transition-all duration-200 ease-out active:scale-[0.96] ${
                 !isLight
-                  ? 'btn-primary border-transparent shadow-sm'
+                  ? 'btn-primary border-transparent shadow-sm scale-[1.02]'
                   : 'border-[var(--border-lg)] text-zinc-400 hover:text-zinc-200 hover:bg-[var(--bg-hover-sm)]'
               }`}
             >
-              <Moon size={13} />
+              <Moon size={13} className={`transition-transform duration-200 ${!isLight ? 'scale-110' : ''}`} />
               Night
             </button>
             {/* Day */}
             <button
               onClick={() => updateSettings({ theme: 'light' })}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium border transition-all ${
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium border transition-all duration-200 ease-out active:scale-[0.96] ${
                 isLight
-                  ? 'btn-primary border-transparent shadow-sm'
+                  ? 'btn-primary border-transparent shadow-sm scale-[1.02]'
                   : 'border-[var(--border-lg)] text-zinc-400 hover:text-zinc-200 hover:bg-[var(--bg-hover-sm)]'
               }`}
             >
-              <Sun size={13} />
+              <Sun size={13} className={`transition-transform duration-200 ${isLight ? 'scale-110' : ''}`} />
               Day
             </button>
           </div>
         </section>
 
         {/* ── Accent Color ── */}
-        <section className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 mb-5 shadow-sm">
+        <section className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 mb-5 shadow-sm card-hover">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1">
             Accent Color
           </h2>
@@ -117,16 +117,23 @@ export default function Settings() {
                   title={label}
                   aria-label={`Select ${label} accent`}
                   aria-pressed={isSelected}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                  className={`relative w-8 h-8 rounded-full flex items-center justify-center
+                    transition-all duration-200 ease-out ${
                     isSelected
-                      ? 'ring-2 ring-offset-2 ring-offset-[var(--bg-card)] ring-[var(--accent-primary)] scale-110 shadow-md'
-                      : 'opacity-65 hover:opacity-100 hover:scale-105'
+                      ? 'ring-2 ring-offset-2 ring-offset-[var(--bg-card)] ring-[var(--accent-primary)] scale-110 shadow-md opacity-100'
+                      : 'opacity-60 hover:opacity-100 hover:scale-105 active:scale-95'
                   }`}
                   style={{ backgroundColor: bg }}
                 >
-                  {isSelected && (
-                    <Check size={13} className="text-white drop-shadow-sm" strokeWidth={3} />
-                  )}
+                  <Check
+                    size={13}
+                    className={`text-white drop-shadow-sm transition-all duration-200 ease-out ${
+                      isSelected
+                        ? 'opacity-100 scale-100 rotate-0'
+                        : 'opacity-0 scale-50 -rotate-45 pointer-events-none'
+                    }`}
+                    strokeWidth={3}
+                  />
                 </button>
               );
             })}
@@ -134,7 +141,7 @@ export default function Settings() {
         </section>
 
         {/* ── Archived Habits ── */}
-        <section className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 mb-5 shadow-sm">
+        <section className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 mb-5 shadow-sm card-hover">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1">
             Archived Habits
           </h2>
@@ -189,7 +196,7 @@ export default function Settings() {
         </section>
 
         {/* ── Data Management ── */}
-        <section className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 mb-5 shadow-sm">
+        <section className="bg-[var(--bg-card)] border border-[var(--border-md)] rounded-2xl p-6 mb-5 shadow-sm card-hover">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1">
             Data &amp; Backup
           </h2>
@@ -199,14 +206,14 @@ export default function Settings() {
           <div className="flex items-center gap-3">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg border border-[var(--border-lg)] text-xs font-medium text-zinc-300 hover:text-white hover:bg-[var(--bg-hover-sm)] transition-all"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg border border-[var(--border-lg)] text-xs font-medium text-zinc-300 hover:text-white hover:bg-[var(--bg-hover-sm)] active:scale-[0.97] transition-all duration-150 ease-out"
             >
               <Download size={13} />
               <span>Export JSON</span>
             </button>
             <button
               onClick={() => fileRef.current?.click()}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg border border-[var(--border-lg)] text-xs font-medium text-zinc-300 hover:text-white hover:bg-[var(--bg-hover-sm)] transition-all"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg border border-[var(--border-lg)] text-xs font-medium text-zinc-300 hover:text-white hover:bg-[var(--bg-hover-sm)] active:scale-[0.97] transition-all duration-150 ease-out"
             >
               <Upload size={13} />
               <span>Import JSON</span>
