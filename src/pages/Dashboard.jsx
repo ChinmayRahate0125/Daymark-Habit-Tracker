@@ -237,8 +237,8 @@ export default function Dashboard() {
           {activeHabits.length > 0 && (
             <div className="overflow-x-auto min-h-[220px]">
               <table
-                className="w-full border-collapse"
-                style={{ tableLayout: 'fixed' }}
+                className="border-collapse"
+                style={{ tableLayout: 'fixed', width: 'max-content', minWidth: '100%' }}
               >
                 <colgroup>
                   {/* Habit name column */}
@@ -316,15 +316,30 @@ export default function Dashboard() {
                           style={isRowMenuOpen ? { position: 'relative', zIndex: 30 } : undefined}
                         >
                           <div className="flex items-center gap-2.5 min-w-0 transition-transform duration-200 ease-out group-hover:translate-x-0.5">
-                            <span className={`text-[15px] leading-none flex-shrink-0 transition-transform duration-200 ease-out group-hover:scale-110 ${categoryColor(habit.category)}`}>
-                              {categoryIcon(habit.category)}
-                            </span>
-                            <span
-                              className="text-[13px] text-zinc-200 font-medium truncate flex-1 leading-tight transition-colors duration-200 ease-out group-hover:text-zinc-100"
-                              title={habit.name}
+                            {/* Clickable name+icon area — toggles TODAY's completion */}
+                            <button
+                              onClick={() => handleToggle(habit.id, TODAY)}
+                              title={`Toggle today's completion for "${habit.name}"`}
+                              className={`flex items-center gap-2.5 min-w-0 flex-1 text-left cursor-pointer rounded-md px-1 -mx-1 py-0.5 transition-all duration-150 ${
+                                isDone(habit.id, TODAY)
+                                  ? 'hover:bg-[var(--accent-subtle)] opacity-80 hover:opacity-100'
+                                  : 'hover:bg-[var(--bg-hover)]'
+                              }`}
                             >
-                              {habit.name}
-                            </span>
+                              <span className={`text-[15px] leading-none flex-shrink-0 transition-transform duration-200 ease-out group-hover:scale-110 ${categoryColor(habit.category)}`}>
+                                {categoryIcon(habit.category)}
+                              </span>
+                              <span
+                                className={`text-[13px] font-medium truncate flex-1 leading-tight transition-colors duration-200 ease-out ${
+                                  isDone(habit.id, TODAY)
+                                    ? 'text-zinc-400 line-through decoration-zinc-500'
+                                    : 'text-zinc-200 group-hover:text-zinc-100'
+                                }`}
+                                title={habit.name}
+                              >
+                                {habit.name}
+                              </span>
+                            </button>
                             {/* Context menu — appears on row hover */}
                             <div
                               className={`relative flex-shrink-0 transition-opacity duration-150 ${
