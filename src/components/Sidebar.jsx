@@ -1,12 +1,14 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, BarChart2, Award, Settings } from 'lucide-react';
+import { LayoutDashboard, BarChart2, Target, Bookmark, Award, Settings } from 'lucide-react';
 
 const navItems = [
-  { to: '/',          label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/insights',  label: 'Insights',  icon: BarChart2 },
-  { to: '/badges',    label: 'Badges',    icon: Award },
-  { to: '/settings',  label: 'Settings',  icon: Settings },
+  { to: '/',           label: 'Dashboard',  icon: LayoutDashboard },
+  { to: '/insights',   label: 'Insights',   icon: BarChart2 },
+  { to: '/challenges', label: 'Challenges', icon: Target },
+  { to: '/lists',      label: 'My Lists',   icon: Bookmark },
+  { to: '/badges',     label: 'Badges',     icon: Award },
+  { to: '/settings',   label: 'Settings',   icon: Settings },
 ];
 
 export default function Sidebar() {

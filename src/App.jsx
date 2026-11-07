@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import Insights from './pages/Insights';
+import Challenges from './pages/Challenges';
+import MyLists from './pages/MyLists';
 import Badges from './pages/Badges';
 import Settings from './pages/Settings';
 import useHabitStore from './store/useHabitStore';
@@ -17,18 +19,30 @@ function AnimatedRoutes() {
   return (
     <div key={location.pathname} className="page-enter">
       <Routes location={location}>
-        <Route path="/"          element={<Dashboard />} />
-        <Route path="/insights"  element={<Insights />} />
-        <Route path="/badges"    element={<Badges />} />
-        <Route path="/settings"  element={<Settings />} />
+        <Route path="/"                  element={<Dashboard />} />
+        <Route path="/insights"          element={<Insights />} />
+        <Route path="/challenges"        element={<Challenges />} />
+        <Route path="/lists"             element={<MyLists />} />
+        <Route path="/lists/:categoryId" element={<MyLists />} />
+        <Route path="/badges"            element={<Badges />} />
+        <Route path="/settings"          element={<Settings />} />
       </Routes>
     </div>
   );
 }
 
 export default function App() {
-  const theme  = useHabitStore((s) => s.settings.theme);
+  const theme = useHabitStore((s) => s.settings.theme);
   const accent = useHabitStore((s) => s.settings.accent || 'purple');
+  const evaluateChallenges = useHabitStore((s) => s.evaluateChallenges);
+
+  // Evaluate challenges on initial app load and window focus
+  useEffect(() => {
+    evaluateChallenges();
+    const handleFocus = () => evaluateChallenges();
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [evaluateChallenges]);
 
   // Keep the <html> class in sync with the persisted theme setting.
   useEffect(() => {

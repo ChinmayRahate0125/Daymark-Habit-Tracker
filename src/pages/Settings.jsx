@@ -201,7 +201,7 @@ export default function Settings() {
             Data &amp; Backup
           </h2>
           <p className="text-xs text-zinc-400 mb-4">
-            Export your entire habit record as JSON or restore from an existing backup file.
+            Export your habits, challenges, and personal lists as JSON or restore from an existing backup file.
           </p>
           <div className="flex items-center gap-3">
             <button
@@ -239,7 +239,7 @@ export default function Settings() {
             <span>Danger Zone</span>
           </h2>
           <p className="text-xs text-zinc-400 mb-4">
-            Irreversible actions that clear all habits, check-ins, and streak records.
+            Irreversible actions that clear all habits, challenges, lists, check-ins, and streak records.
           </p>
           {!confirmReset ? (
             <button

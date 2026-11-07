@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { format, parseISO, startOfDay, isAfter } from 'date-fns';
+import { evaluateAllChallenges } from '../utils/challengeRules';
 
 const todayStr = () => format(new Date(), 'yyyy-MM-dd');
 
@@ -131,6 +132,8 @@ const useHabitStore = create(
     (set, get) => ({
       habits: [],        // { id, name, category, status, createdAt, archivedAt }
       completions: {},   // { habitId: { 'yyyy-MM-dd': true } }
+      challenges: [],    // [ { id, name, description, duration, startDate, currentAttemptStartDate, successfulDates, currentStreak, bestStreak, status, createdAt, completedAt, attemptHistory } ]
+      lists: [],         // [ { id, categoryId, title, metadata, notes, link, createdAt, completed, completedAt } ]
       settings: {
         accent: 'purple',
         theme: 'dark',
@@ -198,6 +201,145 @@ const useHabitStore = create(
         });
       },
 
+      // ── Challenges ──────────────────────────────────────────────────────────
+
+      addChallenge: ({ name, description = '', duration = 30, startDate }) => {
+        const today = todayStr();
+        const start = startDate || today;
+        const id = `c_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+        const newChallenge = {
+          id,
+          name: name.trim(),
+          description: description?.trim() || '',
+          duration: Number(duration),
+          startDate: start,
+          currentAttemptStartDate: start,
+          successfulDates: [],
+          currentStreak: 0,
+          bestStreak: 0,
+          status: 'active',
+          createdAt: today,
+          completedAt: null,
+          attemptHistory: [],
+        };
+
+        set((s) => ({
+          challenges: [...(s.challenges || []), newChallenge],
+        }));
+      },
+
+      checkInChallenge: (id) => {
+        const today = todayStr();
+        set((s) => {
+          // Always evaluate missed days before applying check-in
+          const currentChallenges = evaluateAllChallenges(s.challenges || [], today);
+          const nextChallenges = currentChallenges.map((c) => {
+            if (c.id !== id) return c;
+            if (c.status === 'completed') return c;
+
+            // Cannot check in before start date
+            if (today < c.startDate) return c;
+
+            // Strict rule: cannot check in more than once on the same day
+            if (c.successfulDates?.includes(today)) return c;
+
+            const nextSuccessful = [...(c.successfulDates || []), today];
+            const nextStreak = nextSuccessful.length;
+            const nextBest = Math.max(c.bestStreak || 0, nextStreak);
+            const isCompleted = nextStreak >= c.duration;
+
+            let attemptHistory = c.attemptHistory ? [...c.attemptHistory] : [];
+            if (isCompleted) {
+              const completedAttempt = {
+                id: `att_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+                attemptNumber: attemptHistory.length + 1,
+                startDate: c.currentAttemptStartDate,
+                completedDate: today,
+                streakAchieved: nextStreak,
+                status: 'completed',
+              };
+              attemptHistory.push(completedAttempt);
+            }
+
+            return {
+              ...c,
+              successfulDates: nextSuccessful,
+              currentStreak: nextStreak,
+              bestStreak: nextBest,
+              status: isCompleted ? 'completed' : 'active',
+              completedAt: isCompleted ? today : null,
+              attemptHistory,
+            };
+          });
+
+          return { challenges: nextChallenges };
+        });
+      },
+
+      deleteChallenge: (id) => {
+        set((s) => ({
+          challenges: (s.challenges || []).filter((c) => c.id !== id),
+        }));
+      },
+
+      evaluateChallenges: () => {
+        const today = todayStr();
+        set((s) => ({
+          challenges: evaluateAllChallenges(s.challenges || [], today),
+        }));
+      },
+
+      // ── My Lists ────────────────────────────────────────────────────────────
+
+      addListItem: ({ categoryId, title, metadata = {}, notes = '', link = '' }) => {
+        const today = todayStr();
+        const id = `item_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+        const newItem = {
+          id,
+          categoryId,
+          title: title.trim(),
+          metadata: metadata || {},
+          notes: notes?.trim() || '',
+          link: link?.trim() || '',
+          createdAt: today,
+          completed: false,
+          completedAt: null,
+        };
+
+        set((s) => ({
+          lists: [...(s.lists || []), newItem],
+        }));
+      },
+
+      updateListItem: (id, updates) => {
+        set((s) => ({
+          lists: (s.lists || []).map((item) =>
+            item.id === id ? { ...item, ...updates } : item
+          ),
+        }));
+      },
+
+      deleteListItem: (id) => {
+        set((s) => ({
+          lists: (s.lists || []).filter((item) => item.id !== id),
+        }));
+      },
+
+      toggleListItem: (id) => {
+        const today = todayStr();
+        set((s) => ({
+          lists: (s.lists || []).map((item) => {
+            if (item.id !== id) return item;
+            const nextCompleted = !item.completed;
+            return {
+              ...item,
+              completed: nextCompleted,
+              completedAt: nextCompleted ? today : null,
+            };
+          }),
+        }));
+      },
+
       // ── Settings ────────────────────────────────────────────────────────────
 
       updateSettings: (updates) => {
@@ -207,15 +349,30 @@ const useHabitStore = create(
       // ── Data I/O ─────────────────────────────────────────────────────────────
 
       exportData: () => {
-        const { habits, completions } = get();
-        return JSON.stringify({ habits, completions, exportedAt: new Date().toISOString() }, null, 2);
+        const { habits, completions, challenges, lists } = get();
+        return JSON.stringify(
+          {
+            habits,
+            completions,
+            challenges: challenges || [],
+            lists: lists || [],
+            exportedAt: new Date().toISOString(),
+          },
+          null,
+          2
+        );
       },
 
       importData: (jsonStr) => {
         try {
           const data = JSON.parse(jsonStr);
           if (!Array.isArray(data.habits) || typeof data.completions !== 'object') return false;
-          set({ habits: data.habits, completions: data.completions });
+          set({
+            habits: data.habits,
+            completions: data.completions,
+            challenges: Array.isArray(data.challenges) ? data.challenges : (get().challenges || []),
+            lists: Array.isArray(data.lists) ? data.lists : (get().lists || []),
+          });
           return true;
         } catch {
           return false;
@@ -223,7 +380,7 @@ const useHabitStore = create(
       },
 
       resetData: () => {
-        set({ habits: [], completions: {} });
+        set({ habits: [], completions: {}, challenges: [], lists: [] });
       },
     }),
     {
