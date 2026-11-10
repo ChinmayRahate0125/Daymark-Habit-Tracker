@@ -51,13 +51,13 @@ export default function ChallengeCard({ challenge, onCelebrate }) {
     }
   };
 
-  // Determine grid column structure so boxes fill the card width without clustering
+  // Determine grid column structure so circles space evenly across card width without clustering
   const getGridColsClass = (dur) => {
-    if (dur <= 7) return 'grid-cols-7 gap-2';
-    if (dur <= 14) return 'grid-cols-7 sm:grid-cols-14 gap-1.5 sm:gap-2';
-    if (dur <= 30) return 'grid-cols-6 sm:grid-cols-10 md:grid-cols-15 gap-1.5';
-    if (dur <= 60) return 'grid-cols-6 sm:grid-cols-10 md:grid-cols-15 gap-1.5';
-    return 'grid-cols-9 sm:grid-cols-10 md:grid-cols-15 gap-1';
+    if (dur <= 7) return 'grid-cols-7 gap-y-2.5 gap-x-1.5';
+    if (dur <= 14) return 'grid-cols-7 sm:grid-cols-14 gap-y-2.5 gap-x-1.5';
+    if (dur <= 30) return 'grid-cols-6 sm:grid-cols-10 md:grid-cols-15 gap-y-2.5 gap-x-1';
+    if (dur <= 60) return 'grid-cols-6 sm:grid-cols-10 md:grid-cols-15 gap-y-2 gap-x-1';
+    return 'grid-cols-6 sm:grid-cols-10 md:grid-cols-15 gap-y-2 gap-x-1';
   };
 
   // Build the day items array (1 to duration)
@@ -182,43 +182,59 @@ export default function ChallengeCard({ challenge, onCelebrate }) {
           </span>
         </div>
 
-        {/* Grid utilizing card width effectively */}
+        {/* Circular Commitment Grid */}
         <div className={`grid ${getGridColsClass(duration)} w-full`}>
           {days.map(({ dayNum, state }) => {
             if (state === 'completed') {
               return (
-                <div
-                  key={dayNum}
-                  title={`Day ${dayNum}: Confirmed`}
-                  className={`aspect-square w-full rounded-[4px] flex items-center justify-center text-[10px] font-mono select-none bg-[var(--accent-primary)] text-white shadow-xs transition-all duration-150 ${
-                    isAnimating && dayNum === currentStreak ? 'complete-pop' : ''
-                  }`}
-                >
-                  <Check size={11} strokeWidth={3} className="text-white" />
+                <div key={dayNum} className="flex items-center justify-center">
+                  <div
+                    title={`Day ${dayNum}: Completed`}
+                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-[var(--accent-primary)] text-white shadow-xs select-none transition-all duration-150 hover:scale-110 hover:brightness-110 ${
+                      isAnimating && dayNum === currentStreak ? 'complete-pop' : ''
+                    }`}
+                  >
+                    <Check size={12} strokeWidth={2.8} className="text-white" />
+                  </div>
                 </div>
               );
             }
 
             if (state === 'today') {
               return (
-                <div
-                  key={dayNum}
-                  title={`Day ${dayNum}: Today (Ready to confirm)`}
-                  className="aspect-square w-full rounded-[4px] flex items-center justify-center text-[10px] font-mono select-none border-[1.5px] border-[var(--accent-primary)] bg-[var(--accent-subtle)] text-[var(--accent-text)] font-bold transition-all duration-150 shadow-xs shadow-[var(--accent-glow)]"
-                >
-                  {dayNum}
+                <div key={dayNum} className="flex items-center justify-center">
+                  <div
+                    title={`Day ${dayNum}: Today (Pending confirmation)`}
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[10px] sm:text-[11px] font-mono border-2 border-[var(--accent-primary)] bg-[var(--accent-subtle)] text-[var(--accent-text)] font-semibold select-none transition-all duration-150 shadow-xs shadow-[var(--accent-glow)] hover:scale-110 hover:border-[var(--accent-hover)]"
+                  >
+                    {dayNum}
+                  </div>
+                </div>
+              );
+            }
+
+            if (state === 'missed') {
+              return (
+                <div key={dayNum} className="flex items-center justify-center">
+                  <div
+                    title={`Day ${dayNum}: Missed`}
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[10px] sm:text-[11px] font-mono border border-rose-500/35 bg-rose-500/10 text-rose-400 select-none transition-all duration-150 hover:scale-105"
+                  >
+                    {dayNum}
+                  </div>
                 </div>
               );
             }
 
             // upcoming / muted
             return (
-              <div
-                key={dayNum}
-                title={`Day ${dayNum}: Future`}
-                className="aspect-square w-full rounded-[4px] flex items-center justify-center text-[10px] font-mono select-none border border-[var(--border-xs)] bg-[var(--bg-canvas)] text-zinc-600 dark:text-zinc-500 opacity-40"
-              >
-                {dayNum}
+              <div key={dayNum} className="flex items-center justify-center">
+                <div
+                  title={`Day ${dayNum}: Upcoming`}
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[10px] sm:text-[11px] font-mono border border-[var(--border-xs)] bg-[var(--bg-canvas)] text-zinc-500 dark:text-zinc-400 opacity-60 select-none transition-all duration-150 hover:opacity-100 hover:scale-105"
+                >
+                  {dayNum}
+                </div>
               </div>
             );
           })}
